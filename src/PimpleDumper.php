@@ -199,11 +199,11 @@ class PimpleDumper implements ServiceProviderInterface
             $value = gettype($element);
         }
 
-        return [
+        return array(
             'name'  => $name,
             'type'  => $type,
             'value' => $value,
-        ];
+        );
     }
 
     /**
@@ -213,7 +213,7 @@ class PimpleDumper implements ServiceProviderInterface
      */
     protected function _merge($newMap, $oldMap)
     {
-        $result = [];
+        $result = array();
 
         foreach ($oldMap as $dataOld) {
             $result[$dataOld['name']] = $dataOld;
@@ -245,7 +245,11 @@ class PimpleDumper implements ServiceProviderInterface
             $map     = $this->_merge((array)$oldMap, (array)$map);
         }
 
-        $content = json_encode($map, JSON_PRETTY_PRINT);
+        if (defined('JSON_PRETTY_PRINT')) {
+            $content = json_encode($map, JSON_PRETTY_PRINT);
+        } else {
+            $content = json_encode($map);
+        }
 
         $this->_updateFile($fileName, $content);
 
@@ -263,14 +267,14 @@ class PimpleDumper implements ServiceProviderInterface
     {
         $fileName = $this->_findRoot() . '/' . self::FILE_PHPSTORM;
 
-        $list = [];
+        $list = array();
         foreach ($map as $data) {
             if ($data['type'] === 'class') {
                 $list[] = "            '{$data['name']}' instanceof {$data['value']},";
             }
         }
 
-        $tmpl = [
+        $tmpl = array(
             '<?php',
             '/**',
             ' * ProcessWire PhpStorm Meta',
@@ -292,7 +296,7 @@ class PimpleDumper implements ServiceProviderInterface
             '',
             '}',
             '',
-        ];
+        );
 
         $content = implode("\n", $tmpl);
 

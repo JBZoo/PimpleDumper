@@ -46,11 +46,11 @@ class PimpleDumperTest extends PHPUnit
         $pimple['n_1'] = 1;
         $pimple['n_3'] = 3;
 
-        isSame([
-            ['name' => 'n_1', 'type' => 'int', 'value' => 1],
-            ['name' => 'n_2', 'type' => 'int', 'value' => 2],
-            ['name' => 'n_3', 'type' => 'int', 'value' => 3],
-        ], $this->_toJson($dumper->dumpPimple($pimple)));
+        isSame(array(
+            array('name' => 'n_1', 'type' => 'int', 'value' => 1),
+            array('name' => 'n_2', 'type' => 'int', 'value' => 2),
+            array('name' => 'n_3', 'type' => 'int', 'value' => 3),
+        ), $this->_toJson($dumper->dumpPimple($pimple)));
     }
 
     public function testTypes()
@@ -59,12 +59,12 @@ class PimpleDumperTest extends PHPUnit
         $subPimple = new Container();
         $dumper    = new PimpleDumper();
 
-        $subPimple['t_array'] = [];
+        $subPimple['t_array'] = array();
         $subPimple['f_array'] = function () {
-            return [];
+            return array();
         };
 
-        $pimple['t_array']   = [];
+        $pimple['t_array']   = array();
         $pimple['t_pimple']  = $subPimple;
         $pimple['t_string']  = 'qwerty';
         $pimple['t_int']     = 1;
@@ -76,7 +76,7 @@ class PimpleDumperTest extends PHPUnit
         };
 
         $pimple['f_array']   = function () {
-            return [];
+            return array();
         };
         $pimple['f_string']  = function () {
             return 'qwerty';
@@ -103,32 +103,32 @@ class PimpleDumperTest extends PHPUnit
             return $subPimple;
         };
 
-        isSame([
-            ['name' => 'f_array', 'type' => 'array', 'value' => ''],
-            ['name' => 'f_bool', 'type' => 'bool', 'value' => true],
-            ['name' => 'f_class', 'type' => 'class', 'value' => 'stdClass'],
-            ['name' => 'f_closure', 'type' => 'closure', 'value' => ''],
-            ['name' => 'f_float', 'type' => 'float', 'value' => 1.5],
-            ['name' => 'f_int', 'type' => 'int', 'value' => 1],
-            ['name' => 'f_null', 'type' => 'null', 'value' => ''],
-            ['name' => 'f_pimple', 'type' => 'container', 'value' => [
-                ['name' => 'f_array', 'type' => 'array', 'value' => ''],
-                ['name' => 't_array', 'type' => 'array', 'value' => ''],
-            ]],
-            ['name' => 'f_string', 'type' => 'string', 'value' => 'qwerty'],
-            ['name' => 't_array', 'type' => 'array', 'value' => ''],
-            ['name' => 't_bool', 'type' => 'bool', 'value' => true],
-            ['name' => 't_class', 'type' => 'class', 'value' => 'stdClass'],
-            ['name' => 't_closure', 'type' => 'null', 'value' => ''],
-            ['name' => 't_float', 'type' => 'float', 'value' => 1.5],
-            ['name' => 't_int', 'type' => 'int', 'value' => 1],
-            ['name' => 't_null', 'type' => 'null', 'value' => ''],
-            ['name' => 't_pimple', 'type' => 'container', 'value' => [
-                ['name' => 'f_array', 'type' => 'array', 'value' => ''],
-                ['name' => 't_array', 'type' => 'array', 'value' => ''],
-            ]],
-            ['name' => 't_string', 'type' => 'string', 'value' => 'qwerty'],
-        ], $this->_toJson($dumper->dumpPimple($pimple)));
+        isSame(array(
+            array('name' => 'f_array', 'type' => 'array', 'value' => ''),
+            array('name' => 'f_bool', 'type' => 'bool', 'value' => true),
+            array('name' => 'f_class', 'type' => 'class', 'value' => 'stdClass'),
+            array('name' => 'f_closure', 'type' => 'closure', 'value' => ''),
+            array('name' => 'f_float', 'type' => 'float', 'value' => 1.5),
+            array('name' => 'f_int', 'type' => 'int', 'value' => 1),
+            array('name' => 'f_null', 'type' => 'null', 'value' => ''),
+            array('name' => 'f_pimple', 'type' => 'container', 'value' => array(
+                array('name' => 'f_array', 'type' => 'array', 'value' => ''),
+                array('name' => 't_array', 'type' => 'array', 'value' => ''),
+            )),
+            array('name' => 'f_string', 'type' => 'string', 'value' => 'qwerty'),
+            array('name' => 't_array', 'type' => 'array', 'value' => ''),
+            array('name' => 't_bool', 'type' => 'bool', 'value' => true),
+            array('name' => 't_class', 'type' => 'class', 'value' => 'stdClass'),
+            array('name' => 't_closure', 'type' => 'null', 'value' => ''),
+            array('name' => 't_float', 'type' => 'float', 'value' => 1.5),
+            array('name' => 't_int', 'type' => 'int', 'value' => 1),
+            array('name' => 't_null', 'type' => 'null', 'value' => ''),
+            array('name' => 't_pimple', 'type' => 'container', 'value' => array(
+                array('name' => 'f_array', 'type' => 'array', 'value' => ''),
+                array('name' => 't_array', 'type' => 'array', 'value' => ''),
+            )),
+            array('name' => 't_string', 'type' => 'string', 'value' => 'qwerty'),
+        ), $this->_toJson($dumper->dumpPimple($pimple)));
     }
 
     public function testAppend()
@@ -145,13 +145,13 @@ class PimpleDumperTest extends PHPUnit
         $pimple['n_0'] = 0;
         $pimple['n_4'] = 4;
 
-        isSame([
-            ['name' => 'n_0', 'type' => 'int', 'value' => 0],
-            ['name' => 'n_1', 'type' => 'int', 'value' => 1],
-            ['name' => 'n_2', 'type' => 'int', 'value' => 2],
-            ['name' => 'n_3', 'type' => 'int', 'value' => 3],
-            ['name' => 'n_4', 'type' => 'int', 'value' => 4],
-        ], $this->_toJson($dumper->dumpPimple($pimple, true)));
+        isSame(array(
+            array('name' => 'n_0', 'type' => 'int', 'value' => 0),
+            array('name' => 'n_1', 'type' => 'int', 'value' => 1),
+            array('name' => 'n_2', 'type' => 'int', 'value' => 2),
+            array('name' => 'n_3', 'type' => 'int', 'value' => 3),
+            array('name' => 'n_4', 'type' => 'int', 'value' => 4),
+        ), $this->_toJson($dumper->dumpPimple($pimple, true)));
     }
 
     public function testAutodump()
@@ -167,10 +167,10 @@ class PimpleDumperTest extends PHPUnit
         //$dumper->__destruct();
         unset($dumper);
 
-        isSame([
-            ['name' => 'auto_1', 'type' => 'int', 'value' => 1],
-            ['name' => 'auto_2', 'type' => 'int', 'value' => 2],
-        ], $this->_toJson(PROJECT_ROOT . '/pimple.json'));
+        isSame(array(
+            array('name' => 'auto_1', 'type' => 'int', 'value' => 1),
+            array('name' => 'auto_2', 'type' => 'int', 'value' => 2),
+        ), $this->_toJson(PROJECT_ROOT . '/pimple.json'));
     }
 
     public function testPhpstorm()
