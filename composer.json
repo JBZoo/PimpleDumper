@@ -13,12 +13,11 @@
         }
     ],
     "require"           : {
-        "php" : ">=5.3.10"
+        "php"           : ">=5.3.10",
+        "pimple/pimple" : "^3.0",
     },
     "require-dev"       : {
-        "jbzoo/phpunit" : "^1.0",
-        "pimple/pimple" : "^3.0"
-
+        "jbzoo/phpunit" : "^1.0"
     },
     "autoload"          : {
         "psr-4" : {
