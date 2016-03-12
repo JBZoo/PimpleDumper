@@ -163,9 +163,9 @@ class PimpleDumper implements ServiceProviderInterface
                 $type  = 'closure';
                 $value = '';
 
-            // } elseif ($element instanceof Container) {
-            //     $type  = 'container';
-            //     $value = $this->_parseContainer($element);
+            } elseif ($element instanceof Container) {
+                $type  = 'container';
+                $value = $this->_parseContainer($element);
 
             } else {
                 $type  = 'class';
