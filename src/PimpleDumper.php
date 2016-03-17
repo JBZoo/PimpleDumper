@@ -121,6 +121,10 @@ class PimpleDumper implements ServiceProviderInterface
 
         $map = $this->_normalizeMap($map);
 
+        if (!count($map)) {
+            $map = get_class($container);
+        }
+
         return $map;
     }
 
@@ -133,6 +137,10 @@ class PimpleDumper implements ServiceProviderInterface
         $map = (array)$map;
 
         usort($map, function ($itemA, $itemB) {
+            if (!isset($itemA['name']) || !isset($itemB['name'])) {
+                return 0;
+            }
+
             return strcmp($itemA['name'], $itemB['name']);
         });
 
@@ -163,9 +171,9 @@ class PimpleDumper implements ServiceProviderInterface
                 $type  = 'closure';
                 $value = '';
 
-            // } elseif ($element instanceof Container) {
-            //     $type  = 'container';
-            //     $value = $this->_parseContainer($element);
+            } elseif ($element instanceof Container) {
+                $value = $this->_parseContainer($element);
+                $type  = is_array($value) ? 'container' : 'class';
 
             } else {
                 $type  = 'class';
@@ -222,7 +230,21 @@ class PimpleDumper implements ServiceProviderInterface
         }
 
         foreach ($newMap as $dataNew) {
-            $result[$dataNew['name']] = $dataNew;
+
+            $name  = $dataNew['name'];
+            $type  = $dataNew['type'];
+            $value = $dataNew['value'];
+
+            if ($type == 'container') {
+                $result[$name] = [
+                    'name'  => $name,
+                    'type'  => 'container',
+                    'value' => $this->_merge($value, array()),
+                ];
+
+            } else {
+                $result[$name] = $dataNew;
+            }
         }
 
         $result = $this->_normalizeMap($result);
@@ -242,9 +264,8 @@ class PimpleDumper implements ServiceProviderInterface
         $fileName = $this->_findRoot() . '/' . self::FILE_PIMPLE;
 
         if ($isAppend && file_exists($fileName)) {
-            $content = file_get_contents($fileName);
-            $oldMap  = @json_decode($content, true);
-            $map     = $this->_merge((array)$oldMap, (array)$map);
+            $oldMap = @json_decode(file_get_contents($fileName), true);
+            $map    = $this->_merge((array)$map, (array)$oldMap);
         }
 
         if (defined('JSON_PRETTY_PRINT')) {
