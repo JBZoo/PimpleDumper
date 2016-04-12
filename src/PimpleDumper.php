@@ -34,11 +34,37 @@ class PimpleDumper implements ServiceProviderInterface
     protected $_container;
 
     /**
+     * @var string
+     */
+    protected $_root;
+
+    /**
+     * PimpleDumper constructor.
+     */
+    public function __construct()
+    {
+        $this->_root = $this->_findRoot();
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function register(Container $pimple)
     {
         $this->_container = $pimple;
+    }
+
+    /**
+     * @param string $root
+     * @throws Exception
+     */
+    public function setRoot($root)
+    {
+        if ($root && $realRoot = realpath($root)) {
+            $this->_root = $realRoot;
+        } else {
+            throw new Exception('New root path is not real: ' . $root);
+        }
     }
 
     /**
@@ -83,8 +109,8 @@ class PimpleDumper implements ServiceProviderInterface
         $dumpPath = null;
 
         for ($i = 0; $i <= 100; $i++) {
-
             $realpath = realpath($path . '/' . self::FIND_IN_ROOT);
+
             if ($realpath) {
                 $dumpPath = realpath($path);
                 break;
@@ -113,7 +139,6 @@ class PimpleDumper implements ServiceProviderInterface
         $map = array();
 
         foreach ($container->keys() as $name) {
-
             if ($item = $this->_parseItem($container, $name)) {
                 $map[] = $item;
             }
@@ -209,11 +234,11 @@ class PimpleDumper implements ServiceProviderInterface
     }
 
     /**
-     * @param array $newMap
      * @param array $oldMap
+     * @param array $newMap
      * @return array
      */
-    protected function _merge($newMap, $oldMap)
+    protected function _merge($oldMap, $newMap)
     {
         $result = array();
 
@@ -239,7 +264,7 @@ class PimpleDumper implements ServiceProviderInterface
      */
     protected function _writeJSON($map, $isAppend = false)
     {
-        $fileName = $this->_findRoot() . '/' . self::FILE_PIMPLE;
+        $fileName = $this->_root . DIRECTORY_SEPARATOR . self::FILE_PIMPLE;
 
         if ($isAppend && file_exists($fileName)) {
             $content = file_get_contents($fileName);
@@ -267,7 +292,7 @@ class PimpleDumper implements ServiceProviderInterface
      */
     protected function _writePHPStorm($map, $className)
     {
-        $fileName = $this->_findRoot() . '/' . self::FILE_PHPSTORM;
+        $fileName = $this->_root . DIRECTORY_SEPARATOR . self::FILE_PHPSTORM;
 
         $list = array();
         foreach ($map as $data) {

@@ -196,6 +196,29 @@ class PimpleDumperTest extends PHPUnit
         isFile($dumper->dumpPhpstorm($pimple));
     }
 
+    public function testSetRoot()
+    {
+        $pimple = new Container();
+        $dumper = new PimpleDumper();
+        $dumper->setRoot(__DIR__);
+
+        $pimple['num'] = 2;
+        $filename = $dumper->dumpPimple($pimple);
+
+        isSame(array(
+            array('name' => 'num', 'type' => 'int', 'value' => 2),
+        ), $this->_fromJson($filename));
+    }
+
+    /**
+     * @expectedException \JBZoo\PimpleDumper\Exception
+     */
+    public function testSetRootUndefined()
+    {
+        $dumper = new PimpleDumper();
+        $dumper->setRoot('undefined');
+    }
+
     /**
      * @param string $file
      * @return array
