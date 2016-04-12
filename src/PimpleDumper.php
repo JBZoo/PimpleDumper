@@ -250,8 +250,7 @@ class PimpleDumper implements ServiceProviderInterface
             $name = $dataNew['name'];
 
             if ($dataNew['type'] === 'container') {
-                $nastedOld = isset($result[$name]['value']) ? $result[$name]['value'] : array();
-
+                $nastedOld        = isset($result[$name]['value']) ? $result[$name]['value'] : array();
                 $dataNew['value'] = $this->_merge($nastedOld, $dataNew['value']);
                 $result[$name]    = $dataNew;
             }
