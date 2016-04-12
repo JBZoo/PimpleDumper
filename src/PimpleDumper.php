@@ -247,7 +247,18 @@ class PimpleDumper implements ServiceProviderInterface
         }
 
         foreach ($newMap as $dataNew) {
-            $result[$dataNew['name']] = $dataNew;
+            $name = $dataNew['name'];
+
+            if ($dataNew['type'] === 'container') {
+                $nastedOld = isset($result[$name]['value']) ? $result[$name]['value'] : array();
+
+                $dataNew['value'] = $this->_merge($nastedOld, $dataNew['value']);
+                $result[$name]    = $dataNew;
+            }
+
+            if (!isset($result[$name])) {
+                $result[$name] = $dataNew;
+            }
         }
 
         $result = $this->_normalizeMap($result);

@@ -203,7 +203,7 @@ class PimpleDumperTest extends PHPUnit
         $dumper->setRoot(__DIR__);
 
         $pimple['num'] = 2;
-        $filename = $dumper->dumpPimple($pimple);
+        $filename      = $dumper->dumpPimple($pimple);
 
         isSame(array(
             array('name' => 'num', 'type' => 'int', 'value' => 2),
@@ -217,6 +217,75 @@ class PimpleDumperTest extends PHPUnit
     {
         $dumper = new PimpleDumper();
         $dumper->setRoot('undefined');
+    }
+
+    public function testMergePlain()
+    {
+        $pimple = new Container();
+        $dumper = new PimpleDumper();
+
+        // before merge
+        $pimple['num_0'] = 0;
+        $pimple['num_1'] = 42;
+        $beforeJson      = $this->_fromJson($dumper->dumpPimple($pimple, true));
+        isSame(array(
+            array("name" => "num_0", "type" => "int", "value" => 0),
+            array("name" => "num_1", "type" => "int", "value" => 42),
+        ), $beforeJson);
+
+        // after merge
+        $pimple['num_0'] = 41;
+        $pimple['num_2'] = 43;
+        $afterJson       = $this->_fromJson($dumper->dumpPimple($pimple, true));
+
+        isSame(array(
+            array("name" => "num_0", "type" => "int", "value" => 0),
+            array("name" => "num_1", "type" => "int", "value" => 42),
+            array("name" => "num_2", "type" => "int", "value" => 43),
+        ), $afterJson);
+    }
+
+    public function testMergeNested()
+    {
+        $pimple = new Container();
+        $dumper = new PimpleDumper();
+
+        $pimple['con_0']              = new Container();
+        $pimple['con_0']['num_0']     = 41;
+        $pimple['con_0']['con_empty'] = new Container();
+
+        if (0) {
+            isSame(array(
+                array(
+                    "name"  => "con_0",
+                    "type"  => "container",
+                    "value" => array(
+                        array("name" => "num_0", "type" => "int", "value" => 41),
+                        array("name" => "con_empty", "type" => "container", "value" => array()),
+                    ),
+                ),
+            ), $this->_fromJson($dumper->dumpPimple($pimple, true)));
+        } else {
+            $dumper->dumpPimple($pimple, true);
+        }
+
+        $pimple['con_0']          = new Container();
+        $pimple['con_0']['num_0'] = 'NO_VALID';
+        $pimple['con_0']['num_1'] = 42;
+        $pimple['con_0']['num_2'] = 43;
+
+        isSame(array(
+            array(
+                "name"  => "con_0",
+                "type"  => "container",
+                "value" => array(
+                    array("name" => "con_empty", "type" => "container", "value" => array()),
+                    array("name" => "num_0", "type" => "int", "value" => 41),
+                    array("name" => "num_1", "type" => "int", "value" => 42),
+                    array("name" => "num_2", "type" => "int", "value" => 43),
+                ),
+            ),
+        ), $this->_fromJson($dumper->dumpPimple($pimple, true)));
     }
 
     /**
