@@ -245,6 +245,25 @@ class PimpleDumperTest extends PHPUnit
         ), $afterJson);
     }
 
+    public function testReplaceExistsObject()
+    {
+        $pimple = new Container();
+        $dumper = new PimpleDumper();
+
+        $pimple['cont'] = new \stdClass();
+        $dumper->dumpPimple($pimple, true);
+
+        $pimple['cont'] = new Container();
+
+        isSame(array(
+            array(
+                "name"  => "cont",
+                "type"  => "class",
+                "value" => "stdClass",
+            ),
+        ), $this->_fromJson($dumper->dumpPimple($pimple, true)));
+    }
+
     public function testMergeNested()
     {
         $pimple = new Container();
@@ -254,20 +273,7 @@ class PimpleDumperTest extends PHPUnit
         $pimple['con_0']['num_0']     = 41;
         $pimple['con_0']['con_empty'] = new Container();
 
-        if (0) {
-            isSame(array(
-                array(
-                    "name"  => "con_0",
-                    "type"  => "container",
-                    "value" => array(
-                        array("name" => "num_0", "type" => "int", "value" => 41),
-                        array("name" => "con_empty", "type" => "container", "value" => array()),
-                    ),
-                ),
-            ), $this->_fromJson($dumper->dumpPimple($pimple, true)));
-        } else {
-            $dumper->dumpPimple($pimple, true);
-        }
+        $dumper->dumpPimple($pimple, true);
 
         $pimple['con_0']          = new Container();
         $pimple['con_0']['num_0'] = 'NO_VALID';
