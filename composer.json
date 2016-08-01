@@ -17,7 +17,7 @@
     },
     "require-dev"       : {
         "pimple/pimple" : "^3.0",
-        "jbzoo/phpunit" : "^1.2.8"
+        "jbzoo/phpunit" : "^1.7|1.x-dev"
     },
     "suggest"           : {
         "pimple/pimple" : "^3.0"
